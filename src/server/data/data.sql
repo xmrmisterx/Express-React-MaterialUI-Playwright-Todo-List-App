@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS todos (
+    id SERIAL PRIMARY KEY,
+    completed BOOLEAN NOT NULL,
+    body VARCHAR(100) NOT NULL
+)

@@ -1,0 +1,7 @@
+.idea
+Notes.txt
+.gitattributes
+test-results
+.DS_Store
+/node_modules
+src/client/README.md
