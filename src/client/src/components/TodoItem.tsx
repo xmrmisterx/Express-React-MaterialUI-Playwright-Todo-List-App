@@ -1,59 +1,58 @@
 import {Box, Typography, Chip, CircularProgress} from "@mui/material";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {Todo} from "./TodoList.tsx";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {BASE_URL} from "../App.tsx";
+import {Todo,BASE_URL} from "../App.tsx";
+import {useState} from "react";
 
-const TodoItem = ({ todo }: { todo: Todo }) => {
-    const queryClient = useQueryClient();
-    const {mutate:updateTodo, isPending:isUpdating} = useMutation({
-        mutationKey:["updateTodo"],
-        mutationFn: async ()=> {
-            if(todo.completed){
-                return alert("Todo item already completed!")
-            }
-            try {
-                const res = await fetch(BASE_URL + `/todos/${todo.id}`, {
-                    method:"PATCH",
-                });
-                const data = await res.json();
-                if (!res.ok) {
-                    throw new Error(data.error || "Something went wrong");
-                }
-                return data;
-            }
-            catch (e) {
-                console.log(e);
-            }
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({queryKey:["todos"]});
+const TodoItem = ({ todo, updateTodoInList, deleteTodoInList }: { todo: Todo, updateTodoInList: (updatedTodo:Todo)=>void, deleteTodoInList: (deletedTodo:Todo)=>void}) => {
+
+    const [isUpdating,setIsUpdating] = useState<Boolean>(false);
+    const [isDeleting, setIsDeleting] = useState<Boolean>(false);
+
+    async function updateTodo (){
+        setIsUpdating(true);
+        if(todo.completed){
+            return alert("You have already completed this todo item!");
         }
-    });
-
-    const {mutate:deleteTodo,isPending:isDeleting} = useMutation({
-        mutationKey:["deleteTodo"],
-        mutationFn:async()=>{
-            try {
-                const res = await fetch(BASE_URL + `/todos/${todo.id}`,{
-                    method:"DELETE"
-                });
-                const data = await res.json();
-
-                if(!res.ok){
-                    throw new Error(data.error || "Something went wrong")
-                }
-                return data;
+        try {
+            const res = await fetch(BASE_URL + `/todos/${todo.id}`, {
+                method:"PATCH"
+            });
+            const data = await res.json();
+            if(!res.ok){
+                throw new Error(data.error || "updatedTodo failed");
             }
-            catch(e){
-                console.log(e);
-            }
-        },
-        onSuccess: ()=>{
-            queryClient.invalidateQueries({queryKey:["todos"]});
+            updateTodoInList(data.data);
+            return data.data;
         }
-    });
+        catch(e){
+            console.log(e);
+        }
+        finally {
+            setIsUpdating(false);
+        }
+    }
+
+    async function deleteTodo(){
+        setIsDeleting(true);
+        try{
+            const res = await fetch(BASE_URL + `/todos/${todo.id}`,{
+                method:"DELETE"
+            });
+            const data = await res.json();
+            if(!res.ok){
+                throw new Error(data.error || "deleteTodo failed");
+            }
+            deleteTodoInList(data.data);
+            return data.data;
+        }
+        catch(e){
+            console.log(e);
+        }
+        finally {
+            setIsDeleting(false);
+        }
+    }
 
     return (
         <Box data-testid="todoItem" display="flex" gap={2} alignItems="center">

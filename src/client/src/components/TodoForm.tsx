@@ -1,54 +1,47 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import { Button, Box, Input, CircularProgress } from "@mui/material";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {BASE_URL} from "../App.tsx";
+import {BASE_URL, Todo} from "../App.tsx";
 
-const TodoForm = () => {
-    const [newTodo, setNewTodo] = useState("");
+const TodoForm = ({addTodo}: {addTodo:(newTodo:Todo)=>void}) => {
+    const [newTodoBody, setNewTodoBody] = useState<string>("");
+    const [isCreating, setIsCreating] = useState<boolean>(false);
 
-    const queryClient = useQueryClient();
-
-    const {mutate:createTodo,isPending:isCreating} = useMutation({
-        mutationKey:["createTodo"],
-        mutationFn:async (event: React.FormEvent)=>{
-            event.preventDefault()
-            try{
-                const res = await fetch(BASE_URL + `/todos`, {
-                    method:"POST",
-                    headers:{
-                        "content-type":"application/json"
-                    },
-                    body:JSON.stringify({body: newTodo})
-                });
-                const data:any = res.json();
-                if (!res.ok) {
-                    throw new Error(data.error || "Something went wrong");
-                }
-
-                setNewTodo("");
-                return data;
+    async function createTodo(event:React.FormEvent){
+        event.preventDefault();
+        setIsCreating(true);
+        try{
+            const res = await fetch(BASE_URL + `/todos`, {
+                method:"POST",
+                headers:{
+                    "content-type":"application/json"
+                },
+                body:JSON.stringify({body:newTodoBody})
+            });
+            const data = await res.json();
+            if(!res.ok){
+                throw new Error(data.error || "createTodo failed");
             }
-            catch (e:any) {
-                throw new Error(e);
-            }
-        },
-        onSuccess: ()=> {
-            queryClient.invalidateQueries({queryKey:["todos"]});
-        },
-        onError: (e) => {
-            alert(e.message);
+            addTodo(data.data);
+            setNewTodoBody("");
+            return data.data;
         }
-    })
+        catch(e:any){
+            throw new Error(e);
+        }
+        finally{
+            setIsCreating(false);
+        }
+    }
 
     return (
         <form data-testid="todoForm" onSubmit={createTodo}>
             <Box display="flex" gap={2}>
                 <Input
                     type="text"
-                    placeholder={"Add task"}
-                    value={newTodo}
-                    onChange={(e) => setNewTodo(e.target.value)}
+                    placeholder="Add task"
+                    value={newTodoBody}
+                    onChange={(e) => setNewTodoBody(e.target.value)}
                     autoFocus
                     fullWidth
                     sx={{ flexGrow: 1, fontSize: "1.1rem", padding: "10px", border:"solid" }}

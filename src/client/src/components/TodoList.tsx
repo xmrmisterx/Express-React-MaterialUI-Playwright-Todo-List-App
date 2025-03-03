@@ -1,35 +1,32 @@
 import { Box, CircularProgress, Stack, Typography } from "@mui/material";
+import React, {useState, useEffect, SetStateAction} from "react";
 import TodoItem from "./TodoItem";
-import {useQuery} from "@tanstack/react-query";
-import {BASE_URL} from "../App.tsx";
+import {BASE_URL, Todo} from "../App.tsx";
 
-export type Todo = {
-    id:number;
-    body:string;
-    completed:string;
-}
+const TodoList = ({todos, setTodos}: {todos:Todo[], setTodos:React.Dispatch<SetStateAction<Todo[]>>}) => {
+    const [isLoading,setIsLoading] = useState<boolean>(false);
 
-const TodoList = () => {
-    // Use Tanstack Query to manage todos list
-    const {data: todos, isLoading} = useQuery<Todo[]>({
-        queryKey: ["todos"],
-        queryFn: async () => {
-            try{
-                const res = await fetch(BASE_URL + `/todos`);
-                const parsedRes = await res.json();
-                const data = parsedRes.data;
-                // console.log("data:", data);
+    useEffect(() => {
+        setIsLoading(true);
+        fetch(BASE_URL + "/todos")
+            .then(res=>res.json())
+            .then(data=>{
+                setTodos(data.data);
+            })
+            .finally(()=>setIsLoading(false));
+    }, []);
 
-                if (!res.ok) {
-                    throw new Error(data.error || "Something went wrong")
-                }
-                return data || [];
-            }
-            catch (e) {
-                console.log("useQuery err:", e);
-            }
-        }
-    });
+    function updateTodoInList(updatedTodo:Todo){
+        setTodos(prevTodos=>
+            prevTodos.map(todo=>todo.id===updatedTodo.id ? updatedTodo : todo)
+        );
+    }
+
+    function deleteTodoInList(deletedTodo:Todo){
+        setTodos(prevTodos=>
+            prevTodos.filter(todo => todo.id !== deletedTodo.id)
+        );
+    }
 
     return (
         <>
@@ -65,7 +62,7 @@ const TodoList = () => {
 
             <Stack spacing={3}>
                 {todos?.map((todo) => (
-                    <TodoItem key={todo.id} todo={todo} />
+                    <TodoItem key={todo.id} todo={todo} updateTodoInList={updateTodoInList} deleteTodoInList={deleteTodoInList}/>
                 ))}
             </Stack>
         </>
