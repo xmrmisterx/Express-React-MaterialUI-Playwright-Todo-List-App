@@ -55,7 +55,7 @@ const TodoItem = ({ todo, updateTodoInList, deleteTodoInList }: { todo: Todo, up
     }
 
     return (
-        <Box data-testid="todoItem" display="flex" gap={2} alignItems="center">
+        <Box data-testid="todoItem" display="flex" gap={1} alignItems="center">
             <Box
                 flex={1}
                 display="flex"
@@ -83,12 +83,12 @@ const TodoItem = ({ todo, updateTodoInList, deleteTodoInList }: { todo: Todo, up
                 />
             </Box>
 
-            <Box display="flex" gap={2} alignItems="center">
-                <Box color="green" sx={{ cursor: "pointer" }} onClick={()=> updateTodo()}>
-                    {!isUpdating ? <CheckCircleIcon/> : <CircularProgress/>}
+            <Box display="flex" gap={1} alignItems="center">
+                <Box color="green" sx={{ cursor: "pointer", border: "solid" }} onClick={()=> updateTodo()}>
+                    {!isUpdating ? <CheckCircleIcon sx={{ fontSize: "48px", ":hover": { color: "darkgreen" } }} /> : <CircularProgress/>}
                 </Box>
-                <Box color="red" sx={{ cursor: "pointer" }} onClick={()=> deleteTodo()}>
-                    {!isDeleting ? <DeleteIcon/> : <CircularProgress/>}
+                <Box color="red" sx={{ cursor: "pointer", border: "solid" }} onClick={()=> deleteTodo()}>
+                    {!isDeleting ? <DeleteIcon sx={{ fontSize:"48px", ":hover": { color: "#de1212" } }}/> : <CircularProgress/>}
                 </Box>
             </Box>
         </Box>

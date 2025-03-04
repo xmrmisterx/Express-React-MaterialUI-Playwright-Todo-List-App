@@ -1,4 +1,4 @@
-import {Box, Container, Stack} from "@mui/material";
+import {Container, Stack} from "@mui/material";
 import Header from "./components/Header.tsx";
 import TodoForm from "./components/TodoForm.tsx";
 import TodoList from "./components/TodoList.tsx";
@@ -8,7 +8,7 @@ export const BASE_URL = "http://localhost:5001/api";
 export type Todo = {
     id:number;
     body:string;
-    completed:string;
+    completed:boolean;
 }
 
 function App() {
@@ -20,26 +20,12 @@ function App() {
 
     return (
         <Stack spacing={2} alignItems="center">
-            <Box
-                sx={{
-                    width: "100%",
-                    maxWidth: "900px",
-                    display: "flex",
-                    justifyContent: "center",
-                }}
+            <Container
             >
                 <Header />
-            </Box>
-
+            </Container>
             <Container
-                sx={{
-                    width: "70%",
-                    maxWidth: "800px",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    gap: 3,
-                }}
+                sx={{width:"50%"}}
             >
                 <TodoForm addTodo={addTodo} />
                 <TodoList todos={todos} setTodos={setTodos}/>

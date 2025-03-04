@@ -36,7 +36,7 @@ const TodoForm = ({addTodo}: {addTodo:(newTodo:Todo)=>void}) => {
 
     return (
         <form data-testid="todoForm" onSubmit={createTodo}>
-            <Box display="flex" gap={2}>
+            <Box display="flex" gap={1}>
                 <Input
                     type="text"
                     placeholder="Add task"
@@ -44,17 +44,18 @@ const TodoForm = ({addTodo}: {addTodo:(newTodo:Todo)=>void}) => {
                     onChange={(e) => setNewTodoBody(e.target.value)}
                     autoFocus
                     fullWidth
-                    sx={{ flexGrow: 1, fontSize: "1.1rem", padding: "10px", border:"solid" }}
+                    disableUnderline
+                    sx={{ minWidth: "95px", fontSize: "1.1rem", pl: "10px", border: "solid", borderColor: "rebeccapurple" }}
                 />
                 <Button
                     type="submit"
                     sx={{
-                        mx: 2,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         minWidth: "50px",
                         padding: "10px",
+                        border: "solid"
                     }}
                 >
                     {isCreating ? (

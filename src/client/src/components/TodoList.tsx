@@ -37,7 +37,7 @@ const TodoList = ({todos, setTodos}: {todos:Todo[], setTodos:React.Dispatch<SetS
                 textAlign="center"
                 textTransform="uppercase"
                 sx={{
-                    background: "linear-gradient(to left, #0b85f8, #00ffff)",
+                    background: "linear-gradient(to left, purple, pink)",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                 }}

@@ -8,10 +8,10 @@ test.describe("Home page", ()=> {
   });
 
   test("Has home page title, header, todo form and todo list title", async ({page})=> {
-    await expect(page).toHaveTitle("Todo List App");
+    await expect(page).toHaveTitle("To-do List App");
 
     const header = page.locator("Header");
-    await expect(header).toContainText("To Do App");
+    await expect(header).toContainText("To-do List App");
 
     const todoForm = page.getByTestId("todoForm");
     await expect(todoForm).toHaveCount(1);
